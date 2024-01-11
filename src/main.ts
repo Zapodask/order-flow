@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
@@ -19,7 +19,9 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
   logger.log(`Running on ${PORT} port.`);
 
+  app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
+
   await app.listen(3000);
 }
 bootstrap();
