@@ -10,3 +10,25 @@ services:
       POSTGRES_DB: database
     ports:
       - 5432:5432
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 50M
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+
+volumes:
+  rabbitmq_data:
