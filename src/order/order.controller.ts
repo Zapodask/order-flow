@@ -10,8 +10,12 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.create(createOrderDto);
+  async create(@Body() createOrderDto: CreateOrderDto) {
+    const order = await this.orderService.create(createOrderDto);
+
+    await this.orderService.sendToPayment(order);
+
+    return order;
   }
 
   @Patch(':id')
