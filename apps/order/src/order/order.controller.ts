@@ -1,8 +1,17 @@
-import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UsePipes,
+  ValidationPipe,
+  UseFilters,
+} from '@nestjs/common';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
+import { ApiTags } from '@nestjs/swagger';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { ApiTags } from '@nestjs/swagger';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
+import { Http2gRPCExceptionFilter } from '../filters/http2gRPCException.filter';
 
 @ApiTags('Order')
 @Controller('order')
@@ -18,11 +27,13 @@ export class OrderController {
     return order;
   }
 
-  @Patch(':id')
-  updateStatus(
-    @Param('id') id: string,
-    @Body() { status }: UpdateOrderStatusDto,
-  ) {
-    return this.orderService.updateStatus(id, status);
+  @GrpcMethod('OrderService')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseFilters(new Http2gRPCExceptionFilter())
+  async updateStatus(@Payload() updateOrderStatusDto: UpdateOrderStatusDto) {
+    await this.orderService.updateStatus(
+      updateOrderStatusDto.id,
+      updateOrderStatusDto.status,
+    );
   }
 }
