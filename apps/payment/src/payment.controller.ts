@@ -24,15 +24,10 @@ export class PaymentController {
 
     const isValidPayment = this.paymentService.validatePayment(amount);
 
-    await fetch('http://localhost:3000/order/' + id, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        status: isValidPayment ? 'paid' : 'failed',
-      }),
-    });
+    await this.paymentService.sendUpdateOrderStatus(
+      id,
+      isValidPayment ? 'paid' : 'failed',
+    );
 
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage();

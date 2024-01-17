@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package order;
+
+service OrderService {
+  rpc UpdateStatus(GetOrderRequest) returns (Empty) {}
+}
+
+message GetOrderRequest {
+  string id = 1;
+  string status = 2;
+}
+
+message Empty {}
